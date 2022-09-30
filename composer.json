@@ -1,0 +1,23 @@
+{
+  "name": "mjaschen/deployer-tasks",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Marcus Jaschen",
+      "email": "mjaschen@gmail.com",
+      "homepage": "https://marcusjaschen.com/"
+    }
+  ],
+  "require": {
+    "php": "^7.3 || ^8.0"
+  },
+  "require-dev": {
+    "deployer/deployer": "^7.0",
+    "ergebnis/composer-normalize": "^2.28.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true
+    }
+  }
+}
