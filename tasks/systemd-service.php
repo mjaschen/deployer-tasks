@@ -41,6 +41,7 @@ namespace Deployer;
 
 set('systemd_service_names', []);
 set('systemd_systemctl_use_sudo', true);
+set('systemd_systemctl_use_sudo_askpass_fallback', true);
 set('systemd_systemctl_command', 'systemctl');
 
 // Tasks
@@ -66,11 +67,13 @@ task('systemd-service:start', function () {
     }
 });
 
-function systemdServiceCommand(string $action, string $serviceName): string
+function systemdServiceCommand(string $action, string $serviceName, bool $skipSudoAskPass = false): string
 {
     $command = get('systemd_systemctl_command') . ' ' . $action . ' ' . $serviceName;
     if (get('systemd_systemctl_use_sudo') === true) {
-        $command = 'sudo ' . $command;
+        // the test for detecting a sudo command in `run()` fails when there's a space before `sudo`:
+        $sudoCommand = get('systemd_systemctl_use_sudo_askpass_fallback', true) ? 'sudo ' : ' sudo ';
+        $command = $sudoCommand . $command;
     }
 
     return run($command);
