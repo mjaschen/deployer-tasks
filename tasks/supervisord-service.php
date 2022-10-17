@@ -39,6 +39,7 @@ namespace Deployer;
 
 set('supervisord_service_names', []);
 set('supervisorctl_use_sudo', true);
+set('supervisorctl_use_sudo_askpass_fallback', true);
 set('supervisorctl_command', 'supervisorctl');
 
 desc('Shows supervisord service(s) status');
@@ -66,7 +67,8 @@ function supervisorctlCommand(string $action, string $serviceName): string
 {
     $command = get('supervisorctl_command') . ' ' . $action . ' ' . $serviceName;
     if (get('supervisorctl_use_sudo') === true) {
-        $command = 'sudo ' . $command;
+        $sudoCommand = get('supervisorctl_use_sudo_askpass_fallback', true) ? 'sudo ' : ' sudo ';
+        $command = $sudoCommand . $command;
     }
 
     return run($command);
