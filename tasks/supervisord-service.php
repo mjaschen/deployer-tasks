@@ -44,9 +44,7 @@ set('supervisorctl_command', 'supervisorctl');
 
 desc('Shows supervisord service(s) status');
 task('supervisord-service:status', function () {
-    foreach (get('supervisord_service_names') as $supervisordServiceName) {
-        supervisorctlCommand('status', $supervisordServiceName);
-    }
+    supervisorctlCommand('status', null);
 });
 
 desc('Stops supervisord service(s)');
@@ -63,9 +61,13 @@ task('supervisord-service:start', function () {
     }
 });
 
-function supervisorctlCommand(string $action, string $serviceName): string
+function supervisorctlCommand(string $action, ?string $serviceName): string
 {
-    $command = get('supervisorctl_command') . ' ' . $action . ' ' . $serviceName;
+    $command = get('supervisorctl_command') . ' ' . $action;
+    if ($serviceName !== null) {
+        $command .= ' ' . $serviceName;
+    }
+
     if (get('supervisorctl_use_sudo') === true) {
         $sudoCommand = get('supervisorctl_use_sudo_askpass_fallback', true) ? 'sudo ' : ' sudo ';
         $command = $sudoCommand . $command;
