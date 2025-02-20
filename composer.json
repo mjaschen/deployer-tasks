@@ -1,6 +1,13 @@
 {
   "name": "mjaschen/deployer-tasks",
   "license": "MIT",
+  "keywords": [
+    "deployer",
+    "systemd",
+    "supervisor",
+    "service",
+    "timer"
+  ],
   "authors": [
     {
       "name": "Marcus Jaschen",
