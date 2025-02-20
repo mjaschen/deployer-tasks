@@ -49,27 +49,35 @@ set('supervisorctl_command', 'supervisorctl');
 
 ## systemd Services
 
-Manages (already registered) systemd services.
+Manages (already registered) systemd services and timers.
 
 Example: stopping services before deployment, starting services when updated files are in place; show service status afterwards:
 
 ```php
 set('systemd_service_names', ['acme_worker.service']);
+set('systemd_timer_names', ['acme_scheduler.timer']);
 
 before('deploy:prepare', 'systemd-service:stop')
+before('deploy:prepare', 'systemd-timer:stop')
 after('deploy:symlink', 'systemd-service:start')
+after('deploy:symlink', 'systemd-timer:start')
 after('systemd-service:start', function() {
     sleep(1);
 });
+after('systemd-timer:start', function() {
+    sleep(1);
+});
 after('systemd-service:start', 'systemd-service:status');
+after('systemd-timer:start', 'systemd-timer:status');
 ```
 
 ### Configuration
 
-Alle possible configuration options with their default values:
+All possible configuration options with their default values:
 
 ```php
 set('systemd_service_names', []);
+set('systemd_timer_names', []);
 set('systemd_systemctl_use_sudo', true);
 set('systemd_systemctl_command', 'systemctl');
 ```

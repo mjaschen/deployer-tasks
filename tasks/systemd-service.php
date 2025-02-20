@@ -40,6 +40,7 @@ namespace Deployer;
 // Configuration variables
 
 set('systemd_service_names', []);
+set('systemd_timer_names', []);
 set('systemd_systemctl_use_sudo', true);
 set('systemd_systemctl_use_sudo_askpass_fallback', true);
 set('systemd_systemctl_command', 'systemctl');
@@ -52,6 +53,12 @@ task('systemd-service:status', function () {
         systemdServiceCommand('status', $systemdServiceName);
     }
 });
+desc('Shows systemd timer(s) status');
+task('systemd-timer:status', function () {
+    foreach (get('systemd_timer_names') as $systemdServiceName) {
+        systemdTimerCommand('status', $systemdServiceName);
+    }
+});
 
 desc('Stops systemd service(s)');
 task('systemd-service:stop', function () {
@@ -59,11 +66,23 @@ task('systemd-service:stop', function () {
         systemdServiceCommand('stop', $systemdServiceName);
     }
 });
+desc('Stops systemd timer(s)');
+task('systemd-timer:stop', function () {
+    foreach (get('systemd_timer_names') as $systemdTimerName) {
+        systemdTimerCommand('stop', $systemdTimerName);
+    }
+});
 
 desc('Starts systemd service(s)');
 task('systemd-service:start', function () {
     foreach (get('systemd_service_names') as $systemdServiceName) {
         systemdServiceCommand('start', $systemdServiceName);
+    }
+});
+desc('Starts systemd timer(s)');
+task('systemd-timer:start', function () {
+    foreach (get('systemd_timer_names') as $systemdTimerName) {
+        systemdTimerCommand('start', $systemdTimerName);
     }
 });
 
@@ -77,4 +96,15 @@ function systemdServiceCommand(string $action, string $serviceName, bool $skipSu
     }
 
     return run($command);
+}
+
+/**
+ * Timers are managed like services for start, stop and status,
+ * so we simply wrap this functionality here.
+ *
+ * This may change in future if some timer-specific commands are needed.
+ */
+function systemdTimerCommand(string $action, string $serviceName, bool $skipSudoAskPass = false): string
+{
+    return systemdServiceCommand($action, $serviceName, $skipSudoAskPass);
 }
